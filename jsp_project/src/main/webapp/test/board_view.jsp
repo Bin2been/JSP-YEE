@@ -62,14 +62,33 @@
 			<td><%= rs.getString("CONTENTS") %></td>
 		</tr>
 	</table>
-	<input type="button" onclick="boardDelete(<%=boardNo%>)" value="삭제">
-	<span><input type="button" onclick="" value="수정"></span>
+	<%
+		String sessionId = "";
+		String sessionStatus = "";
+		String userId = rs.getString("USERID");
+		if(request.isRequestedSessionIdValid()){
+			sessionId = (String)session.getAttribute("userId");
+			sessionStatus = (String)session.getAttribute("status");
+		}
+		
+		if(userId.equals(sessionId) || "A".equals(sessionStatus)) {
+	%>
+		<input type="button" onclick="boardDelete(<%=boardNo%>)" value="삭제">
+		<span><input type="button" onclick="boardUpdate(<%=boardNo%>)" value="수정"></span>
+	<%
+		}
+	%>				
 </body>
 </html>
 <script>
 	function boardDelete(boardNo){
 		if(confirm("정말 삭제 할꺼임?")){
 			location.href="board_delete.jsp?boardNo=" + boardNo;
+		}
+	}
+	function boardUpdate(boardNo){
+		if(confirm("정말 수정 할꺼임?")){
+			location.href="board_update.jsp?boardNo=" + boardNo;
 		}
 	}
 </script>

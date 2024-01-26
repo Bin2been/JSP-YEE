@@ -20,12 +20,23 @@
 </head>
 <body>
 	<%@ include file="dbcoon.jsp"%>
-	<%
+	<%	
 		String sql = "SELECT * FROM TBL_MEMBER";
+		String keyword = request.getParameter("keyword");
+		if(keyword != null){
+			sql += " WHERE USERNAME LIKE '%" + keyword + "%'"
+				+ " OR USERID LIKE '%" + keyword + "%'"
+					;
+		} else {keyword = "";}
 		ResultSet rs = stmt.executeQuery(sql);
+		
 	%>
 	<!-- 	아이디	이름	핸드폰번호	성별	취미1	취미2	취미3 -->
-	
+	<form name="user_list">
+	<div>검색 :
+		<input type="text" name="keyword" value="<%= keyword%>">
+		<input type="button" value="검색" onclick="search()">
+	</div>	
 	<table border="1">
 		<tr>
 			<th>아이디</th>
@@ -66,6 +77,7 @@
 		}
 	%>	
 	</table>
+	</form>
 </body>
 </html>
 <script>
@@ -80,4 +92,10 @@
 	function userInit(userId){
 		location.href="user_login_init.jsp?userId=" + userId;
 	}
+	var user = document.user_list;
+	function search(){
+		location.href="user_list.jsp?keyword=" + user.keyword.value;
+	}
 </script>
+
+
