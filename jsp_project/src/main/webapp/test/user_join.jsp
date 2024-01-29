@@ -32,8 +32,13 @@
 <script>
 	var join = document.join
 	function idCheck(){
+		var id = join.userId.value;
+		if(id == "" || id == undefined){
+			alert("아이디를 입력해주세요.");
+			return;
+		}
 		pop 
 		= window.open("user_idCheck.jsp?userId=" 
-				+ join.userId.value,"join","width=300, height=300");
+				+ id,"join","width=300, height=300");
 	}
 </script>

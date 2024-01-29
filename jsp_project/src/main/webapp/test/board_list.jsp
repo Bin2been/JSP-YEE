@@ -31,11 +31,19 @@
 <body>
 	<%@ include file="dbcoon.jsp"%>
 	<%
-		String sql = "SELECT BOARDNO, TITLE, B.USERID, USERNAME, HIT," 
-				+ "TO_CHAR(CDATETIME, 'YY/MM/DD HH24:MI') AS CDATETIME, " 
-				+ "TO_CHAR(UDATETIME, 'YY/MM/DD HH24:MI') AS UDATETIME " 
-				+ "FROM TBL_BOARD B "
-				+ "INNER JOIN TBL_MEMBER M ON B.USERID = M.USERID " ;
+	String sql = "SELECT B.BOARDNO, TITLE, B.USERID, USERNAME, HIT," 
+			+ "TO_CHAR(B.CDATETIME, 'YY/MM/DD HH24:MI') AS CDATETIME, " 
+			+ "TO_CHAR(B.UDATETIME, 'YY/MM/DD HH24:MI') AS UDATETIME, "
+			+ "C.CNT "
+			+ "FROM TBL_BOARD B "
+			+ "INNER JOIN TBL_MEMBER M ON B.USERID = M.USERID "
+			+ "LEFT JOIN ( "
+			+ "SELECT B.BOARDNO, COUNT(*) AS CNT "
+			+ "FROM TBL_BOARD B "
+			+ "INNER JOIN TBL_COMMENT C ON B.BOARDNO = C.BOARDNO "
+			+ "GROUP BY B.BOARDNO "
+			+ ") C ON B.BOARDNO = C.BOARDNO "
+		;
 				
 		
 		String keyword = request.getParameter("keyword");
@@ -44,7 +52,7 @@
 		}
 		sql += " ORDER BY CDATETIME DESC" ;			
 		ResultSet rs = stmt.executeQuery(sql);
-	
+		
 	%>
 	<form name="board_list">
 	<div>검색어 : 
@@ -65,7 +73,13 @@
 	%>
 		<tr>
 			<td><%= rs.getString("BOARDNO") %></td>
-			<td><a href="board_view.jsp?boardNo=<%= rs.getString("BOARDNO")%>"><%= rs.getString("TITLE") %></a></td>
+			<td>
+			<a href="board_view.jsp?boardNo=<%= rs.getString("BOARDNO")%>"><%= rs.getString("TITLE") %>
+			<% if(rs.getString("CNT") != null){
+				out.println("<span>(" + rs.getString("CNT") + ")</span>");
+			} %> 
+			</a>
+			</td>
 			<td><%= rs.getString("USERNAME") %></td>
 			<td><%= rs.getString("HIT") %></td>
 			<td><%= rs.getString("CDATETIME") %></td>
